@@ -1203,6 +1203,18 @@ class Volume(Drawable):
         return get_bounding_box(self.model_matrix)
 
 
+class VolumeRay(Volume):
+    """
+    3D volumetric data with proper ray casting
+    """
+    children_lower_bits = Array().tag(sync=True, **array_serialization_wrap("children_lower_bits"))
+    children_upper_bits = Array().tag(sync=True, **array_serialization_wrap("children_upper_bits"))
+
+    def __init__(self, **kwargs):
+        super(VolumeRay, self).__init__(**kwargs)
+
+        self.set_trait("type", "VolumeRay")
+
 class MIP(Drawable):
     """
     3D volumetric data.

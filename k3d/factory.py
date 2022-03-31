@@ -29,6 +29,7 @@ from .objects import (
     Vectors,
     Volume,
     MIP,
+    VolumeRay,
     Voxels,
     SparseVoxels,
     VoxelsGroup,
@@ -1365,6 +1366,81 @@ def volume(
     return process_transform_arguments(
         Volume(
             volume=volume,
+            color_map=color_map,
+            opacity_function=opacity_function,
+            color_range=color_range,
+            compression_level=compression_level,
+            samples=samples,
+            alpha_coef=alpha_coef,
+            gradient_step=gradient_step,
+            interpolation=interpolation,
+            shadow=shadow,
+            shadow_delay=shadow_delay,
+            shadow_res=shadow_res,
+            focal_plane=focal_plane,
+            focal_length=focal_length,
+            name=name,
+            group=group,
+            ray_samples_count=ray_samples_count,
+        ),
+        **kwargs
+    )
+
+def _packTexture3D(data):
+    data = data.flatten()
+    N = int(np.ceil(data.shape[0] ** (1 / 3)))
+
+    data = np.pad(data, (0, N**3 - len(data)), mode="constant").reshape(N, N, N)
+    return data
+
+# noinspection PyShadowingNames
+def volume_ray(
+        volume,
+        children,
+        color_map=None,
+        opacity_function=None,
+        color_range=[],
+        samples=512.0,
+        alpha_coef=50.0,
+        gradient_step=0.005,
+        shadow="off",
+        interpolation=True,
+        shadow_delay=500,
+        shadow_res=128,
+        focal_length=0.0,
+        focal_plane=100.0,
+        ray_samples_count=16,
+        name=None,
+        group=None,
+        compression_level=0,
+        **kwargs
+):
+    """."""
+
+    if color_map is None:
+        color_map = default_colormap
+
+    color_range = (
+        check_attribute_range(volume, color_range)
+        if type(color_range) is not dict
+        else color_range
+    )
+
+    if opacity_function is None:
+        opacity_function = [np.min(color_map[::4]), 0.0, np.max(color_map[::4]), 1.0]
+
+    volume = _packTexture3D(volume)
+    children = _packTexture3D(children)
+
+    assert np.all(children < 2**32), "Children id too large"
+    children_lower_bits = children.astype(np.uint32) & ((1 << 16) - 1)
+    children_upper_bits = children.astype(np.uint32) >> 16
+
+    return process_transform_arguments(
+        VolumeRay(
+            volume=volume,
+            children_lower_bits=children_lower_bits,
+            children_upper_bits=children_upper_bits,
             color_map=color_map,
             opacity_function=opacity_function,
             color_range=color_range,
