@@ -1431,6 +1431,7 @@ def volume_ray(
 
     volume = _packTexture3D(volume)
     children = _packTexture3D(children)
+    Npack = len(volume)
 
     assert np.all(children < 2**32), "Children id too large"
     children_lower_bits = children.astype(np.uint32) & ((1 << 16) - 1)
@@ -1441,6 +1442,7 @@ def volume_ray(
             volume=volume,
             children_lower_bits=children_lower_bits,
             children_upper_bits=children_upper_bits,
+            Npack=Npack,
             color_map=color_map,
             opacity_function=opacity_function,
             color_range=color_range,

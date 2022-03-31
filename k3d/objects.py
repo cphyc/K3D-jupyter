@@ -1209,6 +1209,7 @@ class VolumeRay(Volume):
     """
     children_lower_bits = Array().tag(sync=True, **array_serialization_wrap("children_lower_bits"))
     children_upper_bits = Array().tag(sync=True, **array_serialization_wrap("children_upper_bits"))
+    Npack = Int(min=1, max=1024).tag(sync=True)
 
     def __init__(self, **kwargs):
         super(VolumeRay, self).__init__(**kwargs)

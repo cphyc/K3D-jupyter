@@ -159,6 +159,7 @@ module.exports = {
             volumeTexture: { type: 't', value: dataTexture },
             childTextureLowerBits: { type: 't', value: childTextureLowerBits },
             childTextureUpperBits: { type: 't', value: childTextureUpperBits },
+            Npack: { type: 't', value: config.Npack },
             colormap: { type: 't', value: colormap },
             jitterTexture: { type: 't', value: jitterTexture },
         };
