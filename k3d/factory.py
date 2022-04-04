@@ -1434,7 +1434,8 @@ def volume_ray(
     Npack = len(volume)
 
     assert np.all(children < 2**32), "Children id too large"
-    children_lower_bits = children.astype(np.uint32) & ((1 << 16) - 1)
+    mask = 0b1111111111111111
+    children_lower_bits = children.astype(np.uint32) & mask
     children_upper_bits = children.astype(np.uint32) >> 16
 
     return process_transform_arguments(
